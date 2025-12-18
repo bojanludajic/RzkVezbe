@@ -37,7 +37,7 @@ public class SessionService {
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new EntityNotFoundException("Session with id " +  sessionId + " not found"));
 
         int timeToInt = Integer.parseInt(time);
-        if(timeToInt <= 0 || timeToInt >= 24) {
+        if(timeToInt < 0 || timeToInt >= 24) {
             throw new TImeNotValidException("Invalid time value");
         }
 
