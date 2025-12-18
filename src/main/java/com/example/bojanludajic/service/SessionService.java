@@ -1,11 +1,13 @@
 package com.example.bojanludajic.service;
 
+import com.example.bojanludajic.exception.TImeNotValidException;
 import com.example.bojanludajic.model.Horse;
 import com.example.bojanludajic.model.Rider;
 import com.example.bojanludajic.model.Session;
 import com.example.bojanludajic.repository.HorseRepository;
 import com.example.bojanludajic.repository.RiderRepository;
 import com.example.bojanludajic.repository.SessionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,10 +34,13 @@ public class SessionService {
     }
 
     public Session updateTIme(Long sessionId, String time) {
-        Session session = sessionRepository.findById(sessionId).orElse(null);
-        if(session == null) {
-            throw new IllegalArgumentException("Session not found");
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new EntityNotFoundException("Session with id " +  sessionId + " not found"));
+
+        int timeToInt = Integer.parseInt(time);
+        if(timeToInt <= 0 || timeToInt >= 24) {
+            throw new TImeNotValidException("Invalid time value");
         }
+
         session.setTime(time);
 
         return sessionRepository.save(session);

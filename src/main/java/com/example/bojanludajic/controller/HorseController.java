@@ -2,6 +2,7 @@ package com.example.bojanludajic.controller;
 
 import com.example.bojanludajic.model.Horse;
 import com.example.bojanludajic.service.HorseService;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class HorseController {
     }
 
     @GetMapping("/{id_horse}")
-    public ResponseEntity<?> findById(@PathVariable Integer id_horse) {
+    public ResponseEntity<?> findById(@PathVariable @Min(1) Integer id_horse) {
         Horse horse = horseService.findById(id_horse);
         if(horse == null) {
             return ResponseEntity.notFound().build();

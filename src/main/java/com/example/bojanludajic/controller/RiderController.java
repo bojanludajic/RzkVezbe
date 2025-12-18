@@ -6,7 +6,11 @@ import com.example.bojanludajic.model.Horse;
 import com.example.bojanludajic.model.Rider;
 import com.example.bojanludajic.repository.RiderRepository;
 import com.example.bojanludajic.service.RiderService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/riders/")
+@RequestMapping("/riders")
 public class RiderController {
 
     private final RiderService riderService;
@@ -29,6 +33,11 @@ public class RiderController {
         return ResponseEntity.ok(riderService.getAllRiders());
     }
 
+    @GetMapping("/{id_rider}")
+    public ResponseEntity<Rider> getRider(@PathVariable @Min(1) Integer id_rider) {
+        return ResponseEntity.ok(riderService.getRiderById(id_rider));
+    }
+
     @PostMapping("/")
     public ResponseEntity<?>  addRider(@RequestBody Rider rider) {
         Rider saved = riderService.saveRider(rider);
@@ -40,7 +49,7 @@ public class RiderController {
     }
 
     @PostMapping("/{id_rider}/horse")
-    public ResponseEntity<?> addFavoriteHorse(@PathVariable int id_rider, Horse horse) {
+    public ResponseEntity<?> addFavoriteHorse(@PathVariable @Min(1) int id_rider, @Valid Horse horse) {
         try {
             Favorite favorite = riderService.saveFavorite(id_rider, horse);
 
@@ -62,7 +71,7 @@ public class RiderController {
     }
 
     @DeleteMapping("/{id_rider}")
-    public ResponseEntity<?> deleteRider(@PathVariable int id_rider) {
+    public ResponseEntity<?> deleteRider(@PathVariable @Min(1) int id_rider) {
         try {
             riderService.deleteRider(id_rider);
             return ResponseEntity.ok("Rider deleted");
@@ -72,14 +81,9 @@ public class RiderController {
     }
 
     @GetMapping("/{first_name}/{last_name}/breeds")
-    public ResponseEntity<?> getFavoriteBreeds(@PathVariable String first_name, @PathVariable String last_name) {
-        try {
-            Set<Breed> breeds = riderService.getFavoriteBreeds(first_name, last_name);
-
-            return ResponseEntity.ok(breeds);
-        } catch(IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<?> getFavoriteBreeds(@PathVariable @Length(min = 2) String first_name, @PathVariable @NotEmpty String last_name) {
+        Set<Breed> breeds = riderService.getFavoriteBreeds(first_name, last_name);
+        return ResponseEntity.ok(breeds);
     }
 
 }

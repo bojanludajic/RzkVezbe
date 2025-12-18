@@ -2,6 +2,8 @@ package com.example.bojanludajic.controller;
 
 import com.example.bojanludajic.model.Session;
 import com.example.bojanludajic.service.SessionService;
+import jakarta.validation.constraints.Min;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +19,8 @@ public class SessionController {
         this.sessionService = sessionService;
     }
 
-    @PutMapping("/{id_session}/time/{time}")
-    public ResponseEntity<?> updateTime(@PathVariable Long id_session, @PathVariable @Validated String time){
+        @PutMapping("/{id_session}/time/{time}")
+    public ResponseEntity<?> updateTime(@PathVariable @Min(1) Long id_session, @PathVariable @Validated @Length(min=2, max=2) String time){
         try {
             Session session = sessionService.updateTIme(id_session, time);
             return  ResponseEntity.ok(session);

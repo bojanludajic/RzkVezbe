@@ -5,6 +5,7 @@ import com.example.bojanludajic.model.Breed;
 import com.example.bojanludajic.model.Horse;
 import com.example.bojanludajic.repository.BreedRepository;
 import com.example.bojanludajic.repository.HorseRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,9 @@ public class HorseService {
     }
 
     public Horse findById(Integer id) {
-        return horseRepository.findById(id).orElse(null);
+        Horse horse = horseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Horse with id " + id + " not found" ));
+
+        return horse;
     }
 
     public List<Horse> findByBreed(int idBreed) {
@@ -32,6 +35,10 @@ public class HorseService {
         }
 
         return horseRepository.findByBreed(breed);
+    }
+
+    public void save(Horse horse) {
+        horseRepository.save(horse);
     }
 
 }
